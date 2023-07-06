@@ -1,0 +1,97 @@
+from tkinter import *
+import tkinter as tk
+from tkinter import font
+from PIL import ImageTk, Image
+import os
+import pyttsx3
+
+from chatterbot import ChatBot
+import time
+time.clock=time.time
+import collections.abc
+collections.Hashable = collections.abc.Hashable
+from chatterbot.trainers import ChatterBotCorpusTrainer
+
+chatbot=ChatBot('chatbot')
+trainer=ChatterBotCorpusTrainer(chatbot)
+trainer.train('chatterbot.corpus.english')
+
+def _chat_():
+        question=questionField.get()
+        question=question.capitalize()
+        answer=chatbot.get_response(question)
+        textarea.insert(END,'You: '+question+'\n\n')
+        textarea.insert(END,'Bot: '+str(answer)+'\n\n')
+        # this module helps us to produce  output in audio 
+        pyttsx3.speak(answer)
+        questionField.delete(0,END)
+
+def resize_image(image_path, new_width, new_height):
+    image = Image.open(image_path)
+    resized_image = image.resize((new_width, new_height), Image.ANTIALIAS)
+    return ImageTk.PhotoImage(resized_image)
+
+
+winbot=tk.Tk()
+winbot.title('chatbot')
+winbot.geometry('800x600+100+30')
+winbot['background']='yellow'
+winbot.config(background='yellow')
+
+new_width = 250
+new_height = 150
+
+path=r'C:\\Users\\YAJU\\Downloads\\py\\4712109.png'
+logo=PhotoImage(file=r'C:\\Users\\YAJU\\Downloads\\py\\4712109.png')
+logopic=Label(winbot,image=logo)
+resized_image = resize_image(path, new_width, new_height)
+
+logopic = tk.Label(winbot, image=resized_image,bg='black')
+
+logopic.pack()
+
+label = tk.Label(
+    text="Chat Bot",
+    foreground="white",  # Set the text color to white
+    background="black" , # Set the background color to black
+    width=1920,
+    height=1)
+
+new_font=font.Font(family="BankGothic Md BT",size=40,weight="bold")
+
+label.config(font=new_font)
+label.pack(pady=2)
+label.pack()
+
+centerFrame=Frame(winbot)
+centerFrame.pack()
+
+scrollbar=Scrollbar(centerFrame)
+scrollbar.pack(side=RIGHT)
+
+textarea=Text(centerFrame,font=('times new roman',20,'bold'),height=9,yscrollcommand=scrollbar.set,wrap='word')
+textarea.pack(side=LEFT)
+scrollbar.config(command=textarea.yview)
+
+questionField=Entry(winbot,font=('verdana',20,'bold'))
+questionField.pack(pady=15,fill=X)
+
+new_width = 25
+new_height = 15
+
+askpic=r"C:\\Users\\YAJU\Downloads\\py\\54481.png"
+ask=PhotoImage(file=r"C:\\Users\\YAJU\Downloads\\py\\54481.png")
+resizeask=resize_image(askpic,new_width,new_height )
+rask = tk.Label(winbot, image=resizeask,bg='white')
+
+
+askButton=Button(winbot,image=resizeask,command=_chat_)
+askButton.pack(side='left')
+
+
+def click(event):
+    askButton.invoke()
+
+winbot.bind('<Return>',click)
+winbot.mainloop()
+
